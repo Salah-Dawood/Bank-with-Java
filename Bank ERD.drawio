@@ -1,10 +1,10 @@
 <mxfile host="Electron">
   <diagram name="Page-1" id="nJUAtl6j9NGqd2G4WVup">
-    <mxGraphModel dx="860" dy="577" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1147" dy="769" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="avF-VpwAewApO7VLLrRp-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#60a917;strokeColor=#2D7600;fontColor=#ffffff;" value="firstName" vertex="1">
+        <mxCell id="avF-VpwAewApO7VLLrRp-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1ba1e2;strokeColor=#006EAF;fontColor=#ffffff;" value="firstName" vertex="1">
           <mxGeometry height="30" width="196" x="324" y="200" as="geometry" />
         </mxCell>
         <mxCell id="avF-VpwAewApO7VLLrRp-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#0050ef;fontColor=#ffffff;strokeColor=#001DBC;" value="BankUser" vertex="1">
@@ -13,10 +13,10 @@
         <mxCell id="avF-VpwAewApO7VLLrRp-3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1ba1e2;fontColor=#ffffff;strokeColor=#006EAF;" value="Username" vertex="1">
           <mxGeometry height="30" width="196" x="324" y="140" as="geometry" />
         </mxCell>
-        <mxCell id="avF-VpwAewApO7VLLrRp-4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#60a917;fontColor=#ffffff;strokeColor=#2D7600;" value="password" vertex="1">
+        <mxCell id="avF-VpwAewApO7VLLrRp-4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1ba1e2;fontColor=#ffffff;strokeColor=#006EAF;" value="password" vertex="1">
           <mxGeometry height="30" width="196" x="324" y="170" as="geometry" />
         </mxCell>
-        <mxCell id="avF-VpwAewApO7VLLrRp-7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#60a917;fontColor=#ffffff;strokeColor=#2D7600;" value="lastName" vertex="1">
+        <mxCell id="avF-VpwAewApO7VLLrRp-7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1ba1e2;fontColor=#ffffff;strokeColor=#006EAF;" value="lastName" vertex="1">
           <mxGeometry height="30" width="196" x="324" y="230" as="geometry" />
         </mxCell>
         <mxCell id="avF-VpwAewApO7VLLrRp-18" edge="1" parent="1" source="avF-VpwAewApO7VLLrRp-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="avF-VpwAewApO7VLLrRp-7">

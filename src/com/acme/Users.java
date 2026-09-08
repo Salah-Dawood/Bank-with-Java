@@ -1,16 +1,14 @@
-package com.acme.dashboard;
+package com.acme;
 
-abstract class BankUsers {
+public abstract class Users {
     String userName;
     String password;
     String firstName;
-    String lastName;
 
-    BankUsers(String userName, String password, String firstName, String lastName) {
+    Users(String userName, String password, String firstName) {
         this.userName = userName;
         this.password = password;
         this.firstName = firstName;
-        this.lastName = lastName;
     }
 
     public String getUserName() {
@@ -37,11 +35,13 @@ abstract class BankUsers {
         this.firstName = firstName;
     }
 
-    public String getLastName() {
-        return lastName;
+    @Override
+    public String toString(){
+        return "Username " + userName;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public boolean verifyPassword(String password){
+        // to be changed to hashing
+        return this.password.equals(password);
     }
 }

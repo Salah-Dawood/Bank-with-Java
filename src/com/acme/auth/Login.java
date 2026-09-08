@@ -1,8 +1,5 @@
 package com.acme.auth;
 
-import com.acme.dashboard.Banker;
-import com.acme.dashboard.Customer;
-
 import java.util.Scanner;
 
 public class Login {
@@ -47,6 +44,5 @@ public class Login {
         String name = scan.next();
         System.out.print("Enter Password: ");
         String pass = scan.next();
-
     }
 }

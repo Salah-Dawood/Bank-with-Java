@@ -1,9 +1,11 @@
 package com.acme.dashboard;
 
 
+import com.acme.Users;
+
 public class CheckingAccount extends Account{
 
-    public CheckingAccount(BankUsers user, int accID, String accountType) {
+    public CheckingAccount(Users user, int accID, String accountType) {
         super(user, accID, accountType);
     }
 }
