@@ -1,5 +1,6 @@
 package com.acme;
 
+import javax.tools.Tool;
 import java.util.Scanner;
 
 public class Menu {
@@ -31,6 +32,7 @@ public class Menu {
                     break;
                 case 3:
                     System.out.println("Bye Bye");
+                    quit = true;
                     break;
                 default:
                     System.out.println("Please Enter a Valid Option!");
@@ -50,16 +52,14 @@ public class Menu {
 
         System.out.print("Enter new password: ");
         String newPass = scan.next();
-        if (!userService.isUsernameTaken(newName)){
-            userService.addUser(new Customer(newName, newPass, firstName));
+        if (userService.addUser(new Customer(newName, newPass, firstName))){
+            System.out.println("User created successfully.\nUse new credentials to login.");
+            Tools.wait(1);
         } else {
-            System.out.println("Username already taken,\nPlease try again with another username.");
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                System.out.println("The sleep was interrupted.");
-        }}
+            Tools.wait(2);
+        }
     }
+
 
     private static void loginInput(){
         Scanner scan = new Scanner(System.in);
@@ -75,22 +75,18 @@ public class Menu {
             Session.login(loggedInUser);
             System.out.println("Login successful!");
 
-            if (loggedInUser instanceof Customer) {
+            if (loggedInUser.getType().equalsIgnoreCase("Customer")) {
                 //DISPLAY C DASHBOARD HERE
                 customerDashboard.show();
             }
-            else if (loggedInUser instanceof Banker) {
+            else if (loggedInUser.getType().equalsIgnoreCase("Banker")) {
                 //DISPLAY B DASHBOARD HERE
                 bankerDashboard.show();
             }
 
         } else {
             System.out.println("Invalid username or password");
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                System.out.println("The sleep was interrupted.");
-            }
+            Tools.wait(2);
         }
     }
 }

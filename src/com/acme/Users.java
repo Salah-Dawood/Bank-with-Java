@@ -37,10 +37,19 @@ public abstract class Users {
         this.firstName = firstName;
     }
 
+    public String getType() {
+        return type;
+    }
+
     @Override
     public String toString(){
         return type + "," + userName + "," + password + "," + firstName + "," + Tools.getCurrentDateTime();
 
+    }
+
+    public String[] getUser(Users user){
+        String [] userInfo = user.toString().split(",");
+        return userInfo;
     }
 
     public boolean verifyPassword(String password){

@@ -16,18 +16,23 @@ public class UserService {
         addUser(new Banker("admin","admin123","Adam"));
         addUser(new Customer("Moham","moham123","Mohammed"));
     }
-    public void addUser(Users user) {
-        users.add(user);
-        try (FileWriter fw = new FileWriter(FileDBConfig.usersFile.toString(), true);
-             BufferedWriter writer = new BufferedWriter(fw)) {
-
-            writer.write(user.toString());
-            writer.newLine();
-            System.out.println("Successfully appended user: " + user);
-        }catch (
-                IOException e) {
-            System.err.println("Failed to write user to database: " + e.getMessage());
+    public boolean addUser(Users user) {
+        if (!isFirstNameValid(user.firstName)){
+            System.out.println("First name must only contain English letters!\nExample: John");
+            return false;
         }
+        if (!isUserNameValid(user.userName)){
+            System.out.println("Username must only contain English letter and numbers!\nExample: John123");
+            return false;
+        }
+        if (isUsernameTaken(user.userName)){
+            System.out.println("Username already taken!\nPlease try again with another username.");
+            return false;
+        }
+        users.add(user);
+        FileService.addUserToUsers(user);
+        FileService.createUserFile(user);
+        return true;
     }
 
     public Users login(String username, String password) {
@@ -58,8 +63,22 @@ public class UserService {
         } catch (IOException e) {
             System.err.println("Error reading database: " + e.getMessage());
         }
-
         return false;
     }
 
+    private boolean isFirstNameValid(String firstName) {
+        if (firstName == null || firstName.isEmpty()) {
+            return false;
+        }
+        //matches letters a-z upper or lower case
+        return firstName.matches("^[A-Za-z]+$");
+    }
+
+    private boolean isUserNameValid(String userName) {
+        if (userName == null || userName.isEmpty()) {
+            return false;
+        }
+        //matches upper and lower case from a-z and numbers 0-9
+        return userName.matches("^[A-Za-z0-9]+$");
+    }
 }

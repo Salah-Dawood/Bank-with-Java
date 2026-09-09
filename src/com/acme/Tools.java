@@ -45,4 +45,12 @@ public class Tools {
 
         return now.format(formatter);
     }
+
+    public static void wait(int seconds){
+        try {
+            Thread.sleep(seconds * 1000L);
+        } catch (InterruptedException e) {
+            System.out.println("The sleep was interrupted.");
+        }
+    }
 }
