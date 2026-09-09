@@ -1,5 +1,6 @@
 package com.acme.dashboard;
 
+import com.acme.Session;
 import com.acme.Users;
 
 abstract class Account {
@@ -11,14 +12,13 @@ abstract class Account {
     protected boolean hasCard;
     protected boolean isActive;
 
-    public Account(Users user, int accID, String accountType) {
-        this.user = user;
+    public Account() {
+        this.user = Session.getLoggedInUser();
         this.accID = accID;
         this.overDraftTotal = 0;
-        this.hasCard = false;
         this.isActive = true;
         this.balance = 0;
-        this.accountType = accountType;
+
     }
 }
 

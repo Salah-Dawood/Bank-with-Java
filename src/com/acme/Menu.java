@@ -1,13 +1,12 @@
 package com.acme;
 
-import com.acme.auth.Login;
-import com.acme.auth.NewCustomer;
-
 import java.util.Scanner;
 
 public class Menu {
 
     private static UserService userService = new UserService();
+    private static CustomerDashboard customerDashboard = new CustomerDashboard();
+    private static BankerDashboard bankerDashboard = new BankerDashboard();
 
     public static void showMenu(){
 
@@ -17,38 +16,26 @@ public class Menu {
         boolean quit = false;
         while (!quit){
             System.out.println("Welcome to ACME Bank!");
-            printOptions();
-            String input = scan.next();
-            input = input.replace(" ","");
-            if (input.equals("3")){
-                quit = true;
-            }
-            int option = Integer.parseInt(input);
-            findOption(option);
+            System.out.println("1) New Customer");
+            System.out.println("2) Login");
+            System.out.println("3) Quit");
+            int option = Tools.enterOption();
+
+            Tools.space(16);
+            switch (option){
+                case 1:
+                    newCustomerInput();
+                    break;
+                case 2:
+                    loginInput();
+                    break;
+                case 3:
+                    System.out.println("Bye Bye");
+                    break;
+                default:
+                    System.out.println("Please Enter a Valid Option!");
         }
     }
-
-    public static void printOptions(){
-        System.out.println("1) New Customer");
-        System.out.println("2) Login");
-        System.out.println("3) Quit");
-        System.out.print("Please Enter option: ");
-    }
-
-    public static void findOption(int option){
-        Tools.space(16);
-        switch (option){
-            case 1:
-                newCustomerInput();
-                break;
-            case 2:
-                loginInput();
-                break;
-            case 3:
-                break;
-
-
-        }
     }
 
     private static void newCustomerInput() {
@@ -63,14 +50,20 @@ public class Menu {
 
         System.out.print("Enter new password: ");
         String newPass = scan.next();
-
-        userService.addUser(new Customer(newName, newPass, firstName)
-        );
+        if (!userService.isUsernameTaken(newName)){
+            userService.addUser(new Customer(newName, newPass, firstName));
+        } else {
+            System.out.println("Username already taken,\nPlease try again with another username.");
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                System.out.println("The sleep was interrupted.");
+        }}
     }
 
     private static void loginInput(){
         Scanner scan = new Scanner(System.in);
-        System.out.println("Customer Login");
+        System.out.println("Enter credentials");
         System.out.print("Enter Username: ");
         String name = scan.next();
         System.out.print("Enter Password: ");
@@ -79,19 +72,25 @@ public class Menu {
         Users loggedInUser = userService.login(name, pass);
 
         if (loggedInUser != null) {
-
+            Session.login(loggedInUser);
             System.out.println("Login successful!");
 
             if (loggedInUser instanceof Customer) {
-                System.out.println("Welcome Customer");
+                //DISPLAY C DASHBOARD HERE
+                customerDashboard.show();
             }
             else if (loggedInUser instanceof Banker) {
-                System.out.println("Welcome Banker");
+                //DISPLAY B DASHBOARD HERE
+                bankerDashboard.show();
             }
 
         } else {
-            System.out.println(name + " " + pass);
             System.out.println("Invalid username or password");
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                System.out.println("The sleep was interrupted.");
+            }
         }
     }
 }

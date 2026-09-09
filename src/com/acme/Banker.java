@@ -3,7 +3,7 @@ package com.acme;
 public class Banker extends Users {
 
     public Banker(String userName, String password, String firstName) {
-        super(userName, password, firstName);
+        super(userName, password, firstName,"Banker");
     }
 
     protected void verifyName(String userName){

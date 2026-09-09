@@ -4,11 +4,13 @@ public abstract class Users {
     String userName;
     String password;
     String firstName;
+    String type;
 
-    Users(String userName, String password, String firstName) {
+    Users(String userName, String password, String firstName,String type) {
         this.userName = userName;
         this.password = password;
         this.firstName = firstName;
+        this.type = type;
     }
 
     public String getUserName() {
@@ -37,7 +39,8 @@ public abstract class Users {
 
     @Override
     public String toString(){
-        return "Username " + userName;
+        return type + "," + userName + "," + password + "," + firstName + "," + Tools.getCurrentDateTime();
+
     }
 
     public boolean verifyPassword(String password){
