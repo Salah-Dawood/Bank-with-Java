@@ -37,6 +37,7 @@ public class AccountServices {
         switch (option){
             case 1:
                 System.out.println("checking account");
+                FileService.addAccountToUser(new CheckingAccount().toString());
                 break;
             case 2:
                 System.out.println("savings account");

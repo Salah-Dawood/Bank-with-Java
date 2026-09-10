@@ -43,13 +43,12 @@ public abstract class Users {
 
     @Override
     public String toString(){
-        return type + "," + userName + "," + password + "," + firstName + "," + Tools.getCurrentDateTime();
+        return type + "," + userName + "," + password + "," + firstName;
 
     }
 
     public String[] getUser(Users user){
-        String [] userInfo = user.toString().split(",");
-        return userInfo;
+        return user.toString().split(",");
     }
 
     public boolean verifyPassword(String password){

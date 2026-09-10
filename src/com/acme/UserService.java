@@ -4,8 +4,11 @@ import com.acme.Users;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class UserService {
 
@@ -35,12 +38,25 @@ public class UserService {
         return true;
     }
 
-    public Users login(String username, String password) {
-        for (Users user : users) {
-            if (user.getUserName().equals(username) && user.verifyPassword(password)) return user;
-        }
+    public Users login(String userName, String password) {
+        
+        try (Stream<String> lineStream = Files.lines(FileDBConfig.usersFile)) {
 
-        return null;
+            return lineStream
+                    .map(line -> line.split(","))
+
+                    .filter(parts -> parts[1].equals(userName) && parts[2].equals(password))
+
+                    .flatMap(parts -> users.stream()
+                            .filter(user -> user.getUserName().equalsIgnoreCase(userName) && user.getPassword().equals(password)))
+
+                    .findFirst()
+                    .orElse(null);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     protected boolean isUsernameTaken(String userName) {
