@@ -1,5 +1,7 @@
 package com.acme;
 
+import java.io.IOException;
+
 public interface IDashboard {
-    void show();
+    void show() throws IOException;
 }

@@ -9,7 +9,7 @@ public class Main {
 
     public String usersPath = "DB/users.txt";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         FileDBConfig.initiateDatabase();
 

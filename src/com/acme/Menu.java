@@ -1,6 +1,7 @@
 package com.acme;
 
 import javax.tools.Tool;
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Menu {
@@ -9,7 +10,7 @@ public class Menu {
     private static CustomerDashboard customerDashboard = new CustomerDashboard();
     private static BankerDashboard bankerDashboard = new BankerDashboard();
 
-    public static void showMenu(){
+    public static void showMenu() throws IOException {
 
         userService.initialUsers();
         Scanner scan = new Scanner(System.in);
@@ -61,7 +62,7 @@ public class Menu {
     }
 
 
-    private static void loginInput(){
+    private static void loginInput() throws IOException {
         Scanner scan = new Scanner(System.in);
         System.out.println("Enter credentials");
         System.out.print("Enter Username: ");

@@ -1,11 +1,12 @@
 package com.acme;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 public class BankerDashboard implements IDashboard{
 
     @Override
-    public void show() {
+    public void show() throws IOException {
         Users user = Session.getLoggedInUser();
         Tools.space(16);
         boolean logout = false;

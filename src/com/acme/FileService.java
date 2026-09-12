@@ -17,7 +17,7 @@ public class FileService {
         try (FileWriter fw = new FileWriter(FileDBConfig.usersFile.toString(), true);
              BufferedWriter writer = new BufferedWriter(fw)) {
 
-            writer.write(user.toString() + "," + " ");
+            writer.write(user.toString() + ",");
             writer.newLine();
         } catch (
                 IOException e) {
@@ -41,26 +41,25 @@ public class FileService {
         }
     }
 
-    public static void addAccountToUser(String newData) {
-        Users user = Session.getLoggedInUser();
-        String [] accounts = getUserAccountsInfo(user);
-        ArrayList<String> accountList = new ArrayList<>(Arrays.asList(accounts));
+    public static void addAccountToUser(String username, String newAccountEntry) throws IOException {
+        Path path = FileDBConfig.usersFile;
+        List<String> lines = Files.readAllLines(path);
+        List<String> updated = new ArrayList<>();
 
-
-        if (accountList.size() == 1 && accountList.get(0).trim().isEmpty()) {
-            // Remove the blank " " string placeholder so it doesn't stay in your list
-            accountList.remove(0);
+        for (String line : lines) {
+            String[] parts = line.split(",", 5);
+            if (parts.length == 5 && parts[1].equals(username)) {
+                String accountsPart = parts[4];
+                System.out.println("Accounts part: " + accountsPart);
+                accountsPart = accountsPart.isEmpty()
+                        ? newAccountEntry
+                        : accountsPart + ";" + newAccountEntry;
+                line = String.join(",", parts[0], parts[1], parts[2], parts[3], accountsPart);
+            }
+            updated.add(line);
         }
 
-        // 4. Simply call .add()! The ArrayList grows automatically.
-        accountList.add(newData);
-
-        System.out.println("ArrayList content: " + accountList);
-
-        // 5. OPTIONAL: Convert it back to a raw String[] array for your system
-        String[] finalArray = accountList.toArray(new String[0]);
-        System.out.println(finalArray);
-
+        Files.write(path, updated); // overwrites the whole file with new content
     }
 
     private static Path getUserFilePath(Users user) {
@@ -85,8 +84,14 @@ public class FileService {
 
     public static String[] getUserAccountsInfo(Users user) {
         String[] userInfo = getUserLine(user);
-        String[] accounts = userInfo[4].split(";");
-        System.out.println(accounts);
+        String[] accounts;
+        if (userInfo.length >= 5) {
+            accounts = userInfo[4].split(";");
+            System.out.println("User Accounts: " + Arrays.toString(accounts));
+        } else {
+            System.out.println("No accounts found");
+            accounts = new String[]{};
+        }
 
         return accounts;
     }
@@ -108,7 +113,7 @@ public class FileService {
             System.out.println("Could not read the file: " + e.getMessage());
 
         }
-        System.out.println(Arrays.toString(userLine.split(",")));
+        System.out.println("User Line: " + Arrays.toString(userLine.split(",")));
         return userLine.split(",");
     }
 

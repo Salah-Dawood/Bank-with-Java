@@ -1,3 +1,2 @@
-Banker,admin,admin123,Adam, 
+Banker,admin,admin123,Adam,
 Customer,Moham,moham123,Mohammed,
-

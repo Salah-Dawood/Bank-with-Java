@@ -1,12 +1,13 @@
 package com.acme;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 public class CustomerDashboard implements IDashboard {
 
     private AccountServices accountServices = new AccountServices();
 
-    public void show() {
+    public void show() throws IOException {
         Users user = Session.getLoggedInUser();
 
         Tools.space(16);

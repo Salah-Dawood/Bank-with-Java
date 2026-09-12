@@ -1,13 +1,15 @@
 package com.acme;
 
 import com.acme.dashboard.CheckingAccount;
+import com.acme.dashboard.SavingsAccount;
 
+import java.io.IOException;
 import java.util.Scanner;
 import java.util.function.ToLongBiFunction;
 
 public class AccountServices {
 
-    public static void show(){
+    public static void show() throws IOException {
         Users user = Session.getLoggedInUser();
         boolean quit = false;
         while (!quit){
@@ -28,7 +30,7 @@ public class AccountServices {
         }
     }
 
-    protected static void createAccount(Users user){
+    protected static void createAccount(Users user) throws IOException {
         System.out.println("Select type of account.");
         System.out.println("1) Checking Account");
         System.out.println("2) Savings Account");
@@ -37,10 +39,12 @@ public class AccountServices {
         switch (option){
             case 1:
                 System.out.println("checking account");
-                FileService.addAccountToUser(new CheckingAccount().toString());
+                FileService.addAccountToUser( user.getUserName(), new CheckingAccount().toString());
                 break;
             case 2:
                 System.out.println("savings account");
+                FileService.addAccountToUser( user.getUserName(), new SavingsAccount().toString());
+
                 break;
             default:
                 System.out.println("Please Enter valid option");
