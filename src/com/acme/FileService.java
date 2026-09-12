@@ -86,8 +86,17 @@ public class FileService {
         String[] userInfo = getUserLine(user);
         String[] accounts;
         if (userInfo.length >= 5) {
-            accounts = userInfo[4].split(";");
-            System.out.println("User Accounts: " + Arrays.toString(accounts));
+            accounts =  userInfo[4].split(";");
+            for (int i = 1; i <= accounts.length;i++){
+                String[] account = accounts[i-1].split("\\|");
+                System.out.println("Account " + i + ": ");
+                System.out.println("ID: " + account[1]);
+                System.out.println("Type: " + account[2]);
+                System.out.println("Balance: " + account[4]);
+                System.out.println("Current overdrafts fee: " + account[3]);
+                System.out.println("is Active: " + account[5]);
+                System.out.println("------------------------------");
+            }
         } else {
             System.out.println("No accounts found");
             accounts = new String[]{};
@@ -107,13 +116,12 @@ public class FileService {
 
             userLine = lineStream.filter(line -> line.contains(user.getUserName()))
                     .collect(Collectors.joining(""));
-            System.out.println(userLine);
+            //System.out.println(userLine);
 
         } catch (IOException e) {
             System.out.println("Could not read the file: " + e.getMessage());
 
         }
-        System.out.println("User Line: " + Arrays.toString(userLine.split(",")));
         return userLine.split(",");
     }
 

@@ -15,7 +15,8 @@ public class AccountServices {
         while (!quit){
             System.out.println("Manage Accounts");
             System.out.println("1) Create Account");
-            System.out.println("2) Quit");
+            System.out.println("2) View accounts");
+            System.out.println("3) Quit");
             System.out.print("Enter option: ");
             int option = Tools.enterOption();
             switch (option) {
@@ -24,6 +25,9 @@ public class AccountServices {
                     createAccount(user);
                     break;
                 case 2:
+                    FileService.getUserAccountsInfo(user);
+                    break;
+                case 3:
                     quit = true;
                     break;
             }

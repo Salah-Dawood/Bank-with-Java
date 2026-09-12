@@ -1,2 +1,2 @@
 Banker,admin,admin123,Adam,
-Customer,Moham,moham123,Mohammed,
+Customer,Moham,moham123,Mohammed,Moham|8626|Checking|0.0|0.0|true|17038;Moham|9712|Savings|0.0|0.0|true|72866
