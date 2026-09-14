@@ -20,7 +20,7 @@ public class Menu {
             System.out.println("Welcome to ACME Bank!");
             System.out.println("1) New Customer");
             System.out.println("2) Login");
-            System.out.println("3) Quit");
+            System.out.println("3) tmp targetaccID");
             int option = Tools.enterOption();
 
             Tools.space(16);
@@ -32,8 +32,7 @@ public class Menu {
                     loginInput();
                     break;
                 case 3:
-                    System.out.println("Bye Bye");
-                    quit = true;
+                    TransactionService.verifyAccount(scan.next());
                     break;
                 default:
                     System.out.println("Please Enter a Valid Option!");
@@ -76,11 +75,11 @@ public class Menu {
             Session.login(loggedInUser);
             System.out.println("Login successful!");
 
-            if (loggedInUser.getType().equalsIgnoreCase("Customer")) {
+            if (loggedInUser.getClass().getSimpleName().equalsIgnoreCase("Customer")) {
                 //DISPLAY C DASHBOARD HERE
                 customerDashboard.show();
             }
-            else if (loggedInUser.getType().equalsIgnoreCase("Banker")) {
+            else if (loggedInUser.getClass().getSimpleName().equalsIgnoreCase("Banker")) {
                 //DISPLAY B DASHBOARD HERE
                 bankerDashboard.show();
             }

@@ -8,12 +8,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Mastercard implements IMastercard{
-    protected int cardID;
-    protected int withdrawLimit;
-    protected int transferLimit;
-    protected int transferLimitOW;
-    protected int depositLimit;
-    protected int depositLimitOW;
+    protected double withdrawLimit;
+    protected double transferLimit;
+    protected double transferLimitOW;
+    protected double depositLimit;
+    protected double depositLimitOW;
 
     public Mastercard() throws IOException {
         this.depositLimitOW = 200_000;
@@ -21,49 +20,68 @@ public class Mastercard implements IMastercard{
         this.transferLimitOW = 20_000;
         this.transferLimit = 10_000;
         this.withdrawLimit = 5_000;
-        this.cardID = generateCardID();
     }
 
-    private int generateCardID() throws IOException {
-        Set<String> existingCardIds = Files.lines(FileDBConfig.usersFile)
-                .map(line -> line.split(",", 5))
-                .filter(parts -> parts.length == 5 && !parts[4].isEmpty())
-                .flatMap(parts -> Arrays.stream(parts[4].split(";")))
-                .map(acc -> acc.split("\\|", -1))
-                .filter(fields -> fields.length == 7)
-                .map(fields -> fields[6])
-                .collect(Collectors.toSet());
+//    private int generateCardID() throws IOException {
+//        Set<String> existingCardIds = Files.lines(FileDBConfig.usersFile)
+//                .map(line -> line.split(",", 5))
+//                .filter(parts -> parts.length == 5 && !parts[4].isEmpty())
+//                .flatMap(parts -> Arrays.stream(parts[4].split(";")))
+//                .map(acc -> acc.split("\\|", -1))
+//                .filter(fields -> fields.length == 7)
+//                .map(fields -> fields[6])
+//                .collect(Collectors.toSet());
+//
+//        Random rand = new Random();
+//        String id;
+//        do {
+//            id = String.valueOf(10000 + (long) (rand.nextDouble() * 90000));
+//        } while (existingCardIds.contains(id));
+//
+//        return Integer.valueOf(id);
+//    }
 
-        Random rand = new Random();
-        String id;
-        do {
-            id = String.valueOf(10000 + (long) (rand.nextDouble() * 90000));
-        } while (existingCardIds.contains(id));
+//    public int getCardID() {
+//        return cardID;
+//    }
 
-        return Integer.valueOf(id);
-    }
-
-    public int getCardID() {
-        return cardID;
-    }
-
-    public int getWithdrawLimit() {
+    public double getWithdrawLimit() {
         return withdrawLimit;
     }
 
-    public int getTransferLimit() {
+    public double getTransferLimit() {
         return transferLimit;
     }
 
-    public int getTransferLimitOW() {
+    public double getTransferLimitOW() {
         return transferLimitOW;
     }
 
-    public int getDepositLimit() {
+    public double getDepositLimit() {
         return depositLimit;
     }
 
-    public int getDepositLimitOW() {
+    public double getDepositLimitOW() {
         return depositLimitOW;
+    }
+
+    public void setWithdrawLimit(double withdrawLimit) {
+        this.withdrawLimit = withdrawLimit;
+    }
+
+    public void setTransferLimit(double transferLimit) {
+        this.transferLimit = transferLimit;
+    }
+
+    public void setTransferLimitOW(double transferLimitOW) {
+        this.transferLimitOW = transferLimitOW;
+    }
+
+    public void setDepositLimit(double depositLimit) {
+        this.depositLimit = depositLimit;
+    }
+
+    public void setDepositLimitOW(double depositLimitOW) {
+        this.depositLimitOW = depositLimitOW;
     }
 }

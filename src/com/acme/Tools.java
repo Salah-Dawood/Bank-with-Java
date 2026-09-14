@@ -30,6 +30,13 @@ public class Tools {
         String input = new Scanner(System.in).next();
         input = input.replace(" ","");
         int option;
+        if (input.equalsIgnoreCase("e")){
+            option = 100;
+            return option;
+        } else if (input.equalsIgnoreCase("x")) {
+            option = 99;
+            return option;
+        }
         try {
             option = Integer.parseInt(input);
         } catch (NumberFormatException e){
@@ -52,5 +59,37 @@ public class Tools {
         } catch (InterruptedException e) {
             System.out.println("The sleep was interrupted.");
         }
+    }
+
+    public static double enterAmount(){
+        Scanner scan = new Scanner(System.in);
+        System.out.print("Enter amount: ");
+        String input = scan.next();
+        double amount;
+        try {
+            amount = Double.parseDouble(input);
+        } catch (NumberFormatException e) {
+            System.err.println("Invalid number format: " + e.getMessage());
+            amount = 0;
+        }
+        return amount;
+    }
+
+    public static int enterAccountID(){
+        Scanner scan = new Scanner(System.in);
+        System.out.print("Enter Account ID: ");
+        String input = scan.next();
+        int accountID;
+        if (input.length() == 4){
+            try {
+                accountID = Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                System.err.println("Invalid account ID, ID must consist of a four digit number");
+                return 0;
+            }
+            return accountID;
+        }
+        System.out.println("Invalid account ID, ID must consist of a four digit number");
+        return 0;
     }
 }

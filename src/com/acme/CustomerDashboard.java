@@ -25,7 +25,7 @@ public class CustomerDashboard implements IDashboard {
                     AccountServices.show();
                     break;
                 case 2:
-
+                    TransactionsDashboard.show();
                     break;
                 case 3:
 

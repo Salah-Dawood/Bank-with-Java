@@ -14,6 +14,16 @@ public final class FileDBConfig {
     public static final Path customersPath = Paths.get(String.valueOf(rootDir),"Customers");
 
     //clear root
+    public static Path userFile(){
+        Users user = Session.getLoggedInUser();
+        String parent = null;
+        if (user.getClass().getSimpleName().equalsIgnoreCase("Banker")){
+            parent = "Bankers";
+        } else if (user.getClass().getSimpleName().equalsIgnoreCase("Customer")) {
+            parent = "Customers";
+        }
+        return Paths.get("DB",parent,String.format("%s-%s-%s.txt", user.getClass().getSimpleName(), user.getFirstName(), user.getUserName()));
+    }
 
     public static void initiateDatabase() {
 

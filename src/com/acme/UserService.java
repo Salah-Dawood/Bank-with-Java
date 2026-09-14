@@ -7,7 +7,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public class UserService {
@@ -97,4 +99,80 @@ public class UserService {
         //matches upper and lower case from a-z and numbers 0-9
         return userName.matches("^[A-Za-z0-9]+$");
     }
+
+    //loading accounts to user
+
+    public static Optional<Account> loadUserAccountOnLogin(String loggedInUsername) {
+
+        try (Stream<String> lines = Files.lines(FileDBConfig.usersFile)) {
+            return lines
+                    .map(line -> line.split(","))
+                    .filter(parts -> parts.length >= 5)
+                    // Filter by the matching logged-in username (index 1)
+                    .filter(parts -> parts[1].trim().equals(loggedInUsername.trim()))
+                    // Extract the pipe-separated account block (index 4) and build the object
+                    .map(parts -> createAccountFromData(parts[4]))
+                    .filter(java.util.Objects::nonNull)
+                    .findFirst();
+
+        } catch (IOException e) {
+            System.err.println("Database error loading user session: " + e.getMessage());
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Instantiates an account using the no-arg constructor and populates its fields via setters.
+     * Input layout: "8039|CheckingAccount|150.0|50.0|true|Mastercard"
+     */
+    private static Account createAccountFromData(String accountDataChunk) {
+        try {
+            String[] details = accountDataChunk.split("\\|");
+            System.out.println("Account found" + Arrays.toString(details));
+            if (details.length < 6) return null;
+
+            // 1. Parse all individual strings into their raw variable types
+            int accID = Integer.parseInt(details[0].trim());
+            String accountType = details[1].trim();
+            double balance = Double.parseDouble(details[2].trim());
+            double overDraftTotal = Double.parseDouble(details[3].trim());
+            boolean isActive = Boolean.parseBoolean(details[4].trim());
+            // Assumes Mastercard constructor handles its setup or has a fallback string handler
+            String cardType = details[5].trim();
+
+            Account account;
+
+            // 2. Instantiate using your no-argument constructor (throws IOException)
+            switch (accountType) {
+                case "CheckingAccount":
+                    account = new CheckingAccount();
+                    break;
+                case "SavingsAccount":
+                    account = new SavingsAccount();
+                    break;
+                default:
+                    System.err.println("Unknown account type: " + accountType);
+                    return null;
+            }
+
+            // 3. Overwrite the generated constructor values with data parsed from the file
+            account.setAccID(accID);
+            account.setBalance(balance);
+            account.setOverDraftTotal(overDraftTotal);
+            account.setActive(isActive);
+
+            // Note: If you have a setter that takes a string or card object, inject it here
+            // account.setCard(new Mastercard(cardType));
+
+            return account;
+
+        } catch (IOException e) {
+            System.err.println("IOException occurred while running Account constructor: " + e.getMessage());
+            return null;
+        } catch (Exception e) {
+            System.err.println("Failed parsing account attributes: " + e.getMessage());
+            return null;
+        }
+    }
+
 }

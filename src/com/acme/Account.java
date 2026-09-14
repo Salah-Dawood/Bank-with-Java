@@ -1,30 +1,26 @@
-package com.acme.dashboard;
+package com.acme;
 
-import com.acme.*;
-
-import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 abstract class Account {
     protected int accID;
     protected Users user;
-    protected String accountType;
     protected double balance;
     protected double overDraftTotal;
     protected boolean isActive;
     protected Mastercard card;
 
-    public Account(String accountType) throws IOException {
+    public Account() throws IOException {
         this.user = Session.getLoggedInUser();
         this.accID = generateAccountID();
-        this.accountType = accountType;
         this.overDraftTotal = 0;
         this.isActive = true;
         this.balance = 0;
@@ -32,8 +28,7 @@ abstract class Account {
     }
 
     public String toString(){
-        return this.user.getUserName() + "|" + String.valueOf(accID) + "|" + accountType + "|" + String.valueOf(overDraftTotal) + "|" + String.valueOf(balance) + "|" + String.valueOf(isActive) + "|" + String.valueOf(card.getCardID());
-
+        return String.valueOf(accID) + "|" + getClass().getSimpleName() + "|" + String.valueOf(balance) + "|" + String.valueOf(overDraftTotal) + "|" + String.valueOf(isActive) + "|" + String.valueOf(card.getClass().getSimpleName());
     }
 
     public String newAccountInsertion(){
@@ -59,6 +54,46 @@ abstract class Account {
         } while (existingIds.contains(id));
 
         return Integer.valueOf(id);
+    }
+
+    public int getAccID() {
+        return accID;
+    }
+    public void setAccID(int accID) {
+        this.accID = accID;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) throws IOException {
+        this.balance = balance;
+        FileService.updateUserLine(user);
+    }
+
+    public double getOverDraftTotal() {
+        return overDraftTotal;
+    }
+
+    public void setOverDraftTotal(double overDraftTotal) {
+        this.overDraftTotal = overDraftTotal;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public Mastercard getCard() {
+        return card;
+    }
+
+    public void setCard(Mastercard card) {
+        this.card = card;
     }
 }
 

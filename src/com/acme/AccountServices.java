@@ -1,11 +1,6 @@
 package com.acme;
 
-import com.acme.dashboard.CheckingAccount;
-import com.acme.dashboard.SavingsAccount;
-
 import java.io.IOException;
-import java.util.Scanner;
-import java.util.function.ToLongBiFunction;
 
 public class AccountServices {
 
@@ -16,7 +11,7 @@ public class AccountServices {
             System.out.println("Manage Accounts");
             System.out.println("1) Create Account");
             System.out.println("2) View accounts");
-            System.out.println("3) Quit");
+            System.out.println("E) Exit");
             System.out.print("Enter option: ");
             int option = Tools.enterOption();
             switch (option) {
@@ -25,10 +20,13 @@ public class AccountServices {
                     createAccount(user);
                     break;
                 case 2:
-                    FileService.getUserAccountsInfo(user);
+                    FileService.displayUserAccounts(user);
                     break;
-                case 3:
+                case 100:
                     quit = true;
+                    break;
+                default:
+                    System.out.println("Please enter a valid option.");
                     break;
             }
         }
@@ -42,13 +40,12 @@ public class AccountServices {
 
         switch (option){
             case 1:
-                System.out.println("checking account");
-                FileService.addAccountToUser( user.getUserName(), new CheckingAccount().toString());
+                System.out.println("Creating Checking account");
+                user.createChecking();
                 break;
             case 2:
-                System.out.println("savings account");
-                FileService.addAccountToUser( user.getUserName(), new SavingsAccount().toString());
-
+                System.out.println("Creating Savings account");
+                user.createSavings();
                 break;
             default:
                 System.out.println("Please Enter valid option");
