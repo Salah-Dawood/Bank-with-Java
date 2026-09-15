@@ -12,10 +12,14 @@ public class Session {
     public static void login(Users user) throws IOException {
         loggedInUser = user;
         System.out.println("got login call");
+        updateBalance(user);
+    }
+
+    public static void updateBalance(Users user) throws IOException {
         for (int i = 0; i < user.accounts.size();i++) {
             System.out.println("account "+ i + " " + user.accounts.get(i));
             System.out.println("account "+i+" balance: " + FileService.getBalance(i));
-            user.accounts.get(i).setBalance(FileService.getBalance(i));
+            user.accounts.get(i).setBalanceNoUpdate(FileService.getBalance(i));
         }
     }
 

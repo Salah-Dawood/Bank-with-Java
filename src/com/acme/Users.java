@@ -31,8 +31,10 @@ public abstract class Users {
         return password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(String password) throws IOException {
         this.password = password;
+        FileService.updateUserLine(this);
+
     }
 
     public String getFirstName() {
@@ -77,7 +79,7 @@ public abstract class Users {
         if (accounts == null || accounts.isEmpty()) {
             accountsData = "No Accounts";
         } else {
-            // Joins accounts nicely. Example: "Savings,Checking" instead of "[Savings, Checking]"
+
             accountsData = accounts.stream()
                     .map(Account::toString)
                     .collect(java.util.stream.Collectors.joining(";")); // Using ';' prevents breaking your primary commas

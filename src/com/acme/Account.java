@@ -72,6 +72,14 @@ abstract class Account {
         FileService.updateUserLine(user);
     }
 
+    public void setBalanceNoUpdate(double balance){
+        this.balance = balance;
+    }
+
+    public Users getUser() {
+        return user;
+    }
+
     public double getOverDraftTotal() {
         return overDraftTotal;
     }

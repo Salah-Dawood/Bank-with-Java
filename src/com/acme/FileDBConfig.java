@@ -1,11 +1,14 @@
 package com.acme;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.stream.Stream;
 
 public final class FileDBConfig {
     public static final Path rootDir = Paths.get("DB");
@@ -14,15 +17,25 @@ public final class FileDBConfig {
     public static final Path customersPath = Paths.get(String.valueOf(rootDir),"Customers");
 
     //clear root
-    public static Path userFile(){
-        Users user = Session.getLoggedInUser();
-        String parent = null;
-        if (user.getClass().getSimpleName().equalsIgnoreCase("Banker")){
-            parent = "Bankers";
-        } else if (user.getClass().getSimpleName().equalsIgnoreCase("Customer")) {
-            parent = "Customers";
+    public static String userFile(int accId) {
+        try (Stream<String> lines = Files.lines(usersFile)) {
+            return lines
+                    .map(line -> line.split(",", 5))
+                    .filter(parts -> parts.length == 5)
+                    .filter(parts -> Arrays.stream(parts[4].split(";"))
+                            .map(acc -> acc.split("\\|"))
+                            .anyMatch(fields -> fields.length > 0 && fields[0].equals(String.valueOf(accId))))
+                    .findFirst()
+                    .map(parts -> {
+                        String role = parts[0]; // "Customer" or "Banker"
+                        String folder = role.equalsIgnoreCase("Customer") ? "Customers" : "Bankers";
+                        String filename = role + "-" + parts[3] + "-" + parts[1] + ".txt";
+                        return "DB" + File.separator + folder + File.separator + filename;
+                    })
+                    .orElse(null);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read users file", e);
         }
-        return Paths.get("DB",parent,String.format("%s-%s-%s.txt", user.getClass().getSimpleName(), user.getFirstName(), user.getUserName()));
     }
 
     public static void initiateDatabase() {
@@ -39,7 +52,6 @@ public final class FileDBConfig {
         Path bankersPath = Paths.get("DB", "Bankers");
 
         try {
-            // Files.createDirectories creates the target folder and any missing parent folders (like DB/)
             Files.createDirectories(customersPath);
             System.out.println("Created: " + customersPath.toAbsolutePath());
 

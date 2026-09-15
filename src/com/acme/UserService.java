@@ -1,6 +1,7 @@
 package com.acme;
 
 import com.acme.Users;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -14,12 +15,28 @@ import java.util.stream.Stream;
 
 public class UserService {
 
+    private static final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+
+    //encoding
+    public static String hashPassword(String rawPassword) {
+        return encoder.encode(rawPassword);
+    }
+
+    //check password match
+    public boolean verifyPassword(String rawPassword, String storedHash) {
+        return encoder.matches(rawPassword, storedHash);
+    }
+
+    public static boolean changePassword(String newPass,Users user) throws IOException {
+        user.setPassword(hashPassword(newPass));
+        return true;
+    }
     private List<Users> users = new ArrayList<>();
 
     public void initialUsers(){
         System.out.println("initializing users");
-        addUser(new Banker("admin","admin123","Adam"));
-        addUser(new Customer("Moham","moham123","Mohammed"));
+        addUser(new Banker("admin",hashPassword("admin123"),"Adam"));
+        addUser(new Customer("Moham",hashPassword("moham123"),"Mohammed"));
     }
     public boolean addUser(Users user) {
         if (!isFirstNameValid(user.firstName)){
@@ -41,19 +58,25 @@ public class UserService {
     }
 
     public Users login(String userName, String password) {
-        
+
         try (Stream<String> lineStream = Files.lines(FileDBConfig.usersFile)) {
 
-            return lineStream
+            //match creds
+            boolean isValidCredentials = lineStream
                     .map(line -> line.split(","))
+                    .filter(parts -> parts.length >= 3) // Prevent crashes on empty lines
+                    .filter(parts -> parts[1].equalsIgnoreCase(userName)) // Match username
+                    .anyMatch(parts -> verifyPassword(password, parts[2])); // Verify secure hash
 
-                    .filter(parts -> parts[1].equals(userName) && parts[2].equals(password))
+            // return user object
+            if (isValidCredentials) {
+                return users.stream()
+                        .filter(user -> user.getUserName().equalsIgnoreCase(userName))
+                        .findFirst()
+                        .orElse(null);
+            }
 
-                    .flatMap(parts -> users.stream()
-                            .filter(user -> user.getUserName().equalsIgnoreCase(userName) && user.getPassword().equals(password)))
-
-                    .findFirst()
-                    .orElse(null);
+            return null; // Login failed (wrong username or password)
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -99,80 +122,4 @@ public class UserService {
         //matches upper and lower case from a-z and numbers 0-9
         return userName.matches("^[A-Za-z0-9]+$");
     }
-
-    //loading accounts to user
-
-    public static Optional<Account> loadUserAccountOnLogin(String loggedInUsername) {
-
-        try (Stream<String> lines = Files.lines(FileDBConfig.usersFile)) {
-            return lines
-                    .map(line -> line.split(","))
-                    .filter(parts -> parts.length >= 5)
-                    // Filter by the matching logged-in username (index 1)
-                    .filter(parts -> parts[1].trim().equals(loggedInUsername.trim()))
-                    // Extract the pipe-separated account block (index 4) and build the object
-                    .map(parts -> createAccountFromData(parts[4]))
-                    .filter(java.util.Objects::nonNull)
-                    .findFirst();
-
-        } catch (IOException e) {
-            System.err.println("Database error loading user session: " + e.getMessage());
-            return Optional.empty();
-        }
-    }
-
-    /**
-     * Instantiates an account using the no-arg constructor and populates its fields via setters.
-     * Input layout: "8039|CheckingAccount|150.0|50.0|true|Mastercard"
-     */
-    private static Account createAccountFromData(String accountDataChunk) {
-        try {
-            String[] details = accountDataChunk.split("\\|");
-            System.out.println("Account found" + Arrays.toString(details));
-            if (details.length < 6) return null;
-
-            // 1. Parse all individual strings into their raw variable types
-            int accID = Integer.parseInt(details[0].trim());
-            String accountType = details[1].trim();
-            double balance = Double.parseDouble(details[2].trim());
-            double overDraftTotal = Double.parseDouble(details[3].trim());
-            boolean isActive = Boolean.parseBoolean(details[4].trim());
-            // Assumes Mastercard constructor handles its setup or has a fallback string handler
-            String cardType = details[5].trim();
-
-            Account account;
-
-            // 2. Instantiate using your no-argument constructor (throws IOException)
-            switch (accountType) {
-                case "CheckingAccount":
-                    account = new CheckingAccount();
-                    break;
-                case "SavingsAccount":
-                    account = new SavingsAccount();
-                    break;
-                default:
-                    System.err.println("Unknown account type: " + accountType);
-                    return null;
-            }
-
-            // 3. Overwrite the generated constructor values with data parsed from the file
-            account.setAccID(accID);
-            account.setBalance(balance);
-            account.setOverDraftTotal(overDraftTotal);
-            account.setActive(isActive);
-
-            // Note: If you have a setter that takes a string or card object, inject it here
-            // account.setCard(new Mastercard(cardType));
-
-            return account;
-
-        } catch (IOException e) {
-            System.err.println("IOException occurred while running Account constructor: " + e.getMessage());
-            return null;
-        } catch (Exception e) {
-            System.err.println("Failed parsing account attributes: " + e.getMessage());
-            return null;
-        }
-    }
-
 }

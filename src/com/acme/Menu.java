@@ -2,6 +2,7 @@ package com.acme;
 
 import javax.tools.Tool;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Menu {
@@ -20,7 +21,7 @@ public class Menu {
             System.out.println("Welcome to ACME Bank!");
             System.out.println("1) New Customer");
             System.out.println("2) Login");
-            System.out.println("3) tmp targetaccID");
+            System.out.println("3) ");
             int option = Tools.enterOption();
 
             Tools.space(16);
@@ -32,7 +33,9 @@ public class Menu {
                     loginInput();
                     break;
                 case 3:
-                    TransactionService.verifyAccount(scan.next());
+                    int accid = Integer.parseInt(scan.next());
+                    System.out.println(Arrays.toString(FileService.getAccount(accid)));
+
                     break;
                 default:
                     System.out.println("Please Enter a Valid Option!");

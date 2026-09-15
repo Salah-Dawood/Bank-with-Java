@@ -1,13 +1,11 @@
 package com.acme;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -99,7 +97,10 @@ public class FileService {
         String[] accounts = getUserAccountsInfo(user);
         for (int i = 0; i < accounts.length;i++){
             String[] account = accounts[i].split("\\|");
-            System.out.println(Arrays.toString(account));
+            if (account.length < 2){
+                System.out.println(Arrays.toString(account));
+                return;
+            }
             System.out.println("Account Type: " + account[1]);
             System.out.println("ID: " + account[0]);
             System.out.println("Balance: " + account[2]);
@@ -129,59 +130,25 @@ public class FileService {
         return userLine.split(",");
     }
 
-    public static void newUserLine(Users user,String newLine){
-
-        String userLine = user.getUserName();
-        List<String> updatedLines;
-
-        try (Stream<String> lineStream = Files.lines(FileDBConfig.usersFile)) {
-
-            updatedLines = lineStream.map(line -> {
-                if (line.contains(user.getUserName())) {
-                    return newLine;
-                }
-                return line;
-            }).collect(Collectors.toList());
-        } catch (IOException e) {
-            System.err.println("Error reading file: " + e.getMessage());
-            return;
-        }
-
-        try {
-            Files.write(FileDBConfig.usersFile, updatedLines);
-            System.out.println("Line replaced successfully!");
-        } catch (IOException e) {
-            System.err.println("Error writing file: " + e.getMessage());
-        }
-    }
-
-    public static void updateAccountBalance(){
-
-    }
 
     public static void updateUserLine(Users user) throws IOException {
         // Create a temporary file in the same directory
         Path tempFile = Files.createTempFile(FileDBConfig.usersFile.getParent(), "temp_", ".txt");
 
-        // Define what the unique identifier is (e.g., User ID or Account Number)
+        // Define what the unique identifier
         String targetIdentifier = user.getUserName();
 
-        // Generate the brand new line data using polymorphism
-        // This automatically calls Savings.toString() or Checking.toString()
         String updatedLineData = user.toString();
 
-        // Open the original file for reading and the temp file for writing
+        // open files for reading and writing
         try (Stream<String> lines = Files.lines(FileDBConfig.usersFile);
              BufferedWriter writer = Files.newBufferedWriter(tempFile)) {
 
             lines.forEach(line -> {
                 try {
-                    // Check if this is the line belonging to the user
                     if (line.contains(targetIdentifier)) {
-                        // Write the updated information instead of the old line
                         writer.write(updatedLineData);
                     } else {
-                        // Keep the existing line exactly as it was
                         writer.write(line);
                     }
                     writer.newLine();
@@ -191,21 +158,83 @@ public class FileService {
             });
 
         } catch (RuntimeException e) {
-            // Clean up the temp file if something went wrong during processing
+            //clean up
             Files.deleteIfExists(tempFile);
             throw new IOException("File update failed", e.getCause());
         }
 
-        // Atomically replace the old file with the updated temporary file
         Files.move(tempFile, FileDBConfig.usersFile, StandardCopyOption.REPLACE_EXISTING);
     }
+
 
     public static double getBalance(int i){
         Users user = Session.getLoggedInUser();
         String[] accounts = getUserAccountsInfo(user);
         String[] account = accounts[i].split("\\|");
+        System.out.println("returning balance: "+account[2]);
         return Double.parseDouble(account[2]);
 
+    }
+
+    public static String[] getAccount(int id) {
+        try (Stream<String> lines = Files.lines(FileDBConfig.usersFile)) {
+            return lines
+                    .map(line -> line.split(",", 5))
+                    .filter(parts -> parts.length == 5)
+                    .flatMap(parts -> Stream.of(parts[4].split(";")))
+                    .map(acc -> acc.split("\\|"))
+                    .filter(fields -> fields.length > 0 && fields[0].equals(String.valueOf(id)))
+                    .findFirst()
+                    .orElse(null);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read users file", e);
+        }
+    }
+
+    public static boolean updateBalance(int id, double amount) {
+        List<String> originalLines;
+        try {
+            originalLines = Files.readAllLines(FileDBConfig.usersFile);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read users file", e);
+        }
+
+        boolean[] found = {false}; // effectively-final holder so the lambda can flag a match
+
+        List<String> updatedLines = originalLines.stream()
+                .map(line -> {
+                    String[] userParts = line.split(",", 5);
+                    if (userParts.length != 5) {
+                        return line; // malformed line, leave untouched
+                    }
+
+                    String updatedAccountsBlob = Arrays.stream(userParts[4].split(";"))
+                            .map(acc -> {
+                                String[] fields = acc.split("\\|");
+                                if (fields.length > 0 && fields[0].equals(String.valueOf(id))) {
+                                    found[0] = true;
+                                    fields[2] = String.valueOf(Double.parseDouble(fields[2]) + amount);
+                                    return String.join("|", fields);
+                                }
+                                return acc;
+                            })
+                            .collect(Collectors.joining(";"));
+
+                    return String.join(",", userParts[0], userParts[1], userParts[2], userParts[3], updatedAccountsBlob);
+                })
+                .collect(Collectors.toList());
+
+        if (!found[0]) {
+            return false;
+        }
+
+        try {
+            Files.write(FileDBConfig.usersFile, updatedLines, StandardOpenOption.TRUNCATE_EXISTING);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to write users file", e);
+        }
+
+        return true;
     }
 }
 

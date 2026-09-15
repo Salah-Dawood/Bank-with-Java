@@ -1,2 +1,2 @@
-Banker,admin,admin123,Adam,No Accounts,
-Customer,Moham,moham123,Mohammed,9418|CheckingAccount|500.0|0.0|true|Mastercard
+Banker,admin,$2a$12$iV3IQPRdZ4MI.lgVmsxRtu1hM3vj7WzxIKUvBG6sCuVnX83wI2uqO,Adam,No Accounts,
+Customer,Moham,$2a$12$f.QYSoFQC92HPHb9xvrae.8lu0/4ms41p8osY0trA/0uomSOrHOra,Mohammed,No Accounts,
